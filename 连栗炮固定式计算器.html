@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏王——连栗炮固定式计算器</title>
+    <script src="https://cdn.tailwindcss.com/3.3.3"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 1rem;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 28px rgba(31, 38, 135, 0.2);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+        }
+        .result-item {
+            background: rgba(99, 102, 241, 0.1);
+            border-left: 4px solid #4f46e5;
+            transition: all 0.3s ease;
+        }
+        .result-item:hover {
+            transform: translateX(5px);
+            background: rgba(99, 102, 241, 0.15);
+        }
+        .highlight {
+            color: #4f46e5;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center">
+    <div class="card w-full max-w-md p-8">
+        <h1 class="text-2xl font-bold text-center mb-6 text-gray-800">游戏王——连栗炮固定式计算器</h1>
+        
+        <div class="mb-6">
+            <label for="totalCards" class="block text-sm font-medium text-gray-700 mb-2">请输入双方手牌+场上牌数的总和</label>
+            <input type="number" id="totalCards" 
+                   class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                   placeholder="例如：10" min="3" max="24">
+        </div>
+        
+        <button id="calculateBtn" class="btn-primary w-full py-3 rounded-lg font-medium mb-6">
+            <i class="fas fa-calculator mr-2"></i>计算
+        </button>
+        
+        <div id="results" class="space-y-3 hidden">
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">计算结果：</h3>
+            <div id="resultList" class="space-y-2"></div>
+        </div>
+    </div>
+
+    <footer class="mt-8 text-sm text-gray-500 text-center">
+        <p>created by <a href="https://space.coze.cn" class="text-indigo-600 hover:underline">coze space</a></p>
+        <p>页面内容均由 AI 生成，仅供参考</p>
+    </footer>
+
+    <script>
+        document.getElementById('calculateBtn').addEventListener('click', function() {
+            const totalCards = parseInt(document.getElementById('totalCards').value);
+            const resultList = document.getElementById('resultList');
+            const resultsContainer = document.getElementById('results');
+            
+            if (isNaN(totalCards) || totalCards < 3 || totalCards > 24) {
+                alert('请输入3-24之间的有效数字');
+                return;
+            }
+            
+            resultList.innerHTML = '';
+            let hasSolution = false;
+            
+            // 计算所有可能的(a,b)组合
+            for (let a = 1; a <= 8; a++) {
+                for (let b = 1; b <= 8; b++) {
+                    if (2 * a + b === totalCards) {
+                        hasSolution = true;
+                        const sum = a + b;
+                        const resultItem = document.createElement('div');
+                        resultItem.className = 'result-item px-4 py-3 rounded-lg';
+                        resultItem.innerHTML = `
+                            <p class="text-gray-800 mb-1">超量怪兽的等级为 <span class="highlight">${a}</span>，融合怪兽的等级为 <span class="highlight">${b}</span></p>
+                            <p class="text-sm text-gray-600">可选为对象的怪兽等级：<span class="highlight">${sum}</span></p>
+                        `;
+                        resultList.appendChild(resultItem);
+                    }
+                }
+            }
+            
+            if (hasSolution) {
+                resultsContainer.classList.remove('hidden');
+            } else {
+                resultsContainer.classList.add('hidden');
+                alert('没有找到符合条件的解，请检查输入的总牌数是否正确');
+            }
+        });
+    </script>
+</body>
+</html>
